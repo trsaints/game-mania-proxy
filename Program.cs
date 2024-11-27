@@ -88,6 +88,30 @@ app.MapGet("/games/{id:int}/screenshots", async (int id) =>
     .WithName("GetGameScreenshots")
     .WithOpenApi();
 
+app.MapGet("/genres", async ([FromQuery] string? queryParams) =>
+    {
+        using HttpClient client = new();
+
+        try
+        {
+            var routeUrl = ApiUtils.GetApiUrl(builder.Configuration, "genres", queryParams);
+            var response = await client.GetAsync(routeUrl);
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<object>(content);
+
+            return Results.Ok(result);
+        }
+        catch (Exception exception)
+        {   
+            Console.WriteLine("Oops! Something went wrong.");
+
+            return Results.BadRequest(exception.Message);
+        }
+    })
+    .WithName("GetGenres")
+    .WithOpenApi();
+
 app.Run();
 
 internal static class ApiUtils
