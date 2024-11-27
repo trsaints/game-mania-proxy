@@ -1,13 +1,10 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -16,29 +13,35 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.MapGet("/games", async () =>
+    {
+        using HttpClient client = new();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+        try
+        {
+            var routeUrl = ApiUtils.GetApiUrl(builder.Configuration, "games");
+            var response = await client.GetAsync(routeUrl);
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+
+            return Results.Ok(content);
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine("Oops! Something went wrong.");
+
+            return Results.BadRequest(exception.Message);
+        }
+    })
+    .WithName("GetGames");
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+static class ApiUtils
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    public static string GetApiUrl(IConfiguration configuration, string route)
+    {
+        string? apiKey = configuration["CLIENT_SECRET"];
+        return $"https://api.rawg.io/api/{route}?token&key={apiKey}";
+    }
 }
