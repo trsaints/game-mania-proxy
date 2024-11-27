@@ -31,7 +31,7 @@ app.MapGet("/games", async ([FromQuery] string? queryParams) =>
             return Results.Ok(result);
         }
         catch (Exception exception)
-        {   
+        {
             Console.WriteLine("Oops! Something went wrong.");
 
             return Results.BadRequest(exception.Message);
@@ -55,7 +55,7 @@ app.MapGet("/games/{id:int}", async (int id) =>
             return Results.Ok(result);
         }
         catch (Exception exception)
-        {   
+        {
             Console.WriteLine("Oops! Something went wrong.");
 
             return Results.BadRequest(exception.Message);
@@ -79,7 +79,7 @@ app.MapGet("/games/{id:int}/screenshots", async (int id) =>
             return Results.Ok(result);
         }
         catch (Exception exception)
-        {   
+        {
             Console.WriteLine("Oops! Something went wrong.");
 
             return Results.BadRequest(exception.Message);
@@ -103,7 +103,7 @@ app.MapGet("/genres", async ([FromQuery] string? queryParams) =>
             return Results.Ok(result);
         }
         catch (Exception exception)
-        {   
+        {
             Console.WriteLine("Oops! Something went wrong.");
 
             return Results.BadRequest(exception.Message);
@@ -127,13 +127,61 @@ app.MapGet("/genres/{id:int}", async (int id) =>
             return Results.Ok(result);
         }
         catch (Exception exception)
-        {   
+        {
             Console.WriteLine("Oops! Something went wrong.");
 
             return Results.BadRequest(exception.Message);
         }
     })
     .WithName("GetGenreById")
+    .WithOpenApi();
+
+app.MapGet("/publishers", async ([FromQuery] string? queryParams) =>
+    {
+        using HttpClient client = new();
+
+        try
+        {
+            var routeUrl = ApiUtils.GetApiUrl(builder.Configuration, "publishers", queryParams);
+            var response = await client.GetAsync(routeUrl);
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<object>(content);
+
+            return Results.Ok(result);
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine("Oops! Something went wrong.");
+
+            return Results.BadRequest(exception.Message);
+        }
+    })
+    .WithName("GetPublishers")
+    .WithOpenApi();
+
+app.MapGet("/publishers/{id:int}", async (int id) =>
+    {
+        using HttpClient client = new();
+
+        try
+        {
+            var routeUrl = ApiUtils.GetApiUrl(builder.Configuration, $"publishers/{id}");
+            var response = await client.GetAsync(routeUrl);
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<object>(content);
+
+            return Results.Ok(result);
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine("Oops! Something went wrong.");
+
+            return Results.BadRequest(exception.Message);
+        }
+    })
+    .WithName("GetPublisherById")
     .WithOpenApi();
 
 app.Run();
