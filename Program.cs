@@ -112,6 +112,30 @@ app.MapGet("/genres", async ([FromQuery] string? queryParams) =>
     .WithName("GetGenres")
     .WithOpenApi();
 
+app.MapGet("/genres/{id:int}", async (int id) =>
+    {
+        using HttpClient client = new();
+
+        try
+        {
+            var routeUrl = ApiUtils.GetApiUrl(builder.Configuration, $"genres/{id}");
+            var response = await client.GetAsync(routeUrl);
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<object>(content);
+
+            return Results.Ok(result);
+        }
+        catch (Exception exception)
+        {   
+            Console.WriteLine("Oops! Something went wrong.");
+
+            return Results.BadRequest(exception.Message);
+        }
+    })
+    .WithName("GetGenreById")
+    .WithOpenApi();
+
 app.Run();
 
 internal static class ApiUtils
