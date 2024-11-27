@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,13 +16,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/games", async () =>
+app.MapGet("/games", async ([FromQuery] string? queryParams) =>
     {
         using HttpClient client = new();
 
         try
         {
-            var routeUrl = ApiUtils.GetApiUrl(builder.Configuration, "games");
+            var routeUrl = ApiUtils.GetApiUrl(builder.Configuration, "games", queryParams);
             var response = await client.GetAsync(routeUrl);
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
@@ -30,21 +31,24 @@ app.MapGet("/games", async () =>
             return Results.Ok(result);
         }
         catch (Exception exception)
-        {
+        {   
             Console.WriteLine("Oops! Something went wrong.");
 
             return Results.BadRequest(exception.Message);
         }
     })
-    .WithName("GetGames");
+    .WithName("GetGames")
+    .WithOpenApi();
 
 app.Run();
 
 internal static class ApiUtils
 {
-    public static string GetApiUrl(IConfiguration configuration, string route)
+    public static string GetApiUrl(IConfiguration configuration,
+        string route,
+        string? queryParams)
     {
         var apiKey = configuration["CLIENT_SECRET"];
-        return $"https://api.rawg.io/api/{route}?token&key={apiKey}";
+        return $"https://api.rawg.io/api/{route}?token&key={apiKey}{queryParams}";
     }
 }
