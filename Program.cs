@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
@@ -23,8 +25,9 @@ app.MapGet("/games", async () =>
             var response = await client.GetAsync(routeUrl);
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<object>(content);
 
-            return Results.Ok(content);
+            return Results.Ok(result);
         }
         catch (Exception exception)
         {
@@ -37,11 +40,11 @@ app.MapGet("/games", async () =>
 
 app.Run();
 
-static class ApiUtils
+internal static class ApiUtils
 {
     public static string GetApiUrl(IConfiguration configuration, string route)
     {
-        string? apiKey = configuration["CLIENT_SECRET"];
+        var apiKey = configuration["CLIENT_SECRET"];
         return $"https://api.rawg.io/api/{route}?token&key={apiKey}";
     }
 }
