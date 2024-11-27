@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  game-mania-proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        CLIENT_SECRET: ${CLIENT_SECRET}
+    image: gm-proxy:latest
+    ports:
+      - "8080:8080"
+      - "9229:9229" # Port for debugging
+    env_file:
+      - .env
