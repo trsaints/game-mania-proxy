@@ -1,0 +1,6 @@
+@GameManiaProxy_HostAddress = http://localhost:5201
+
+GET {{GameManiaProxy_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
