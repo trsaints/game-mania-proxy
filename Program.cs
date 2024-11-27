@@ -232,6 +232,54 @@ app.MapGet("/platforms/{id:int}", async (int id) =>
     .WithName("GetPlatformById")
     .WithOpenApi();
 
+app.MapGet("/tags", async ([FromQuery] string? queryParams) =>
+    {
+        using HttpClient client = new();
+
+        try
+        {
+            var routeUrl = ApiUtils.GetApiUrl(builder.Configuration, "tags", queryParams);
+            var response = await client.GetAsync(routeUrl);
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<object>(content);
+
+            return Results.Ok(result);
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine("Oops! Something went wrong.");
+
+            return Results.BadRequest(exception.Message);
+        }
+    })
+    .WithName("GetTags")
+    .WithOpenApi();
+
+app.MapGet("/tags/{id:int}", async (int id) =>
+    {
+        using HttpClient client = new();
+
+        try
+        {
+            var routeUrl = ApiUtils.GetApiUrl(builder.Configuration, $"tags/{id}");
+            var response = await client.GetAsync(routeUrl);
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<object>(content);
+
+            return Results.Ok(result);
+        }
+        catch (Exception exception)
+        {
+            Console.WriteLine("Oops! Something went wrong.");
+
+            return Results.BadRequest(exception.Message);
+        }
+    })
+    .WithName("GetTagById")
+    .WithOpenApi();
+
 app.Run();
 
 internal static class ApiUtils
