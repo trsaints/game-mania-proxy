@@ -10,7 +10,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowedOrigins",
         policy =>
         {
-            policy.WithOrigins("https://localhost", builder.Configuration["ProductionDomain"] !)
+            policy.WithOrigins("http://localhost", builder.Configuration["ProductionDomain"] ?? "")
                   .AllowAnyHeader()
                   .WithMethods("GET");
         });
