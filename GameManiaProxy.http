@@ -1,6 +1,61 @@
-@GameManiaProxy_HostAddress = http://localhost:5201
+@GameManiaProxy_HostAddress = http://localhost:8080
 
-GET {{GameManiaProxy_HostAddress}}/weatherforecast/
+GET {{GameManiaProxy_HostAddress}}/games/
+Accept: application/json
+
+###
+
+GET {{GameManiaProxy_HostAddress}}/games/{gameId}
+Accept: application/json
+
+###
+
+GET {{GameManiaProxy_HostAddress}}/publishers/
+Accept: application/json
+
+###
+
+GET {{GameManiaProxy_HostAddress}}/publishers/{publisherId}
+Accept: application/json
+
+###
+
+GET {{GameManiaProxy_HostAddress}}/developers/
+Accept: application/json
+
+###
+
+GET {{GameManiaProxy_HostAddress}}/developers/{developerId}
+Accept: application/json
+
+###
+
+GET {{GameManiaProxy_HostAddress}}/genres/
+Accept: application/json
+
+###
+
+GET {{GameManiaProxy_HostAddress}}/genres/{genreId}
+Accept: application/json
+
+###
+
+GET {{GameManiaProxy_HostAddress}}/platforms/
+Accept: application/json
+
+###
+
+GET {{GameManiaProxy_HostAddress}}/platforms/{platformId}
+Accept: application/json
+
+###
+
+GET {{GameManiaProxy_HostAddress}}/tags/
+Accept: application/json
+
+###
+
+GET {{GameManiaProxy_HostAddress}}/tags/{tagId}
 Accept: application/json
 
 ###
