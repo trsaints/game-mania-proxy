@@ -10,9 +10,13 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowedOrigins",
         policy =>
         {
-            policy.WithOrigins("http://localhost:*", builder.Configuration["ProductionDomain"] ?? "")
-                  .AllowAnyHeader()
-                  .WithMethods("GET");
+            policy.SetIsOriginAllowed(origin =>
+            {
+                var uri = new Uri(origin);
+                return uri.Host == "localhost" || uri.Host == builder.Configuration["PRODUCTION_DOMAIN"];
+            })
+            .AllowAnyHeader()
+            .WithMethods("GET");
         });
 });
 
