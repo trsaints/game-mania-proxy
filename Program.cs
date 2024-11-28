@@ -12,7 +12,7 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins("https://localhost", "https://game-mania-kappa.vercel.app/")
                   .AllowAnyHeader()
-                  .AllowAnyMethod();
+                  .WithMethods("GET");
         });
 });
 
