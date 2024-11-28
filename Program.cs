@@ -10,7 +10,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowedOrigins",
         policy =>
         {
-            policy.WithOrigins("https://localhost", "https://game-mania-kappa.vercel.app/")
+            policy.WithOrigins("https://localhost", builder.Configuration["ProductionDomain"] !)
                   .AllowAnyHeader()
                   .WithMethods("GET");
         });

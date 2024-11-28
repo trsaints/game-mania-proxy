@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile
       args:
         CLIENT_SECRET: ${CLIENT_SECRET}
+        PRODUCTION_DOMAIN: ${PRODUCTION_DOMAIN}
     image: gm-proxy:latest
     ports:
       - "8080:8080"

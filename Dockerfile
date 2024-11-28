@@ -17,9 +17,11 @@ COPY --from=build /app/out .
 
 # Define build arguments
 ARG CLIENT_SECRET
+ARG PRODUCTION_DOMAIN
 
 # Set environment variables using build arguments
 ENV CLIENT_SECRET=${CLIENT_SECRET}
+ENV PRODUCTION_DOMAIN=${PRODUCTION_DOMAIN}
 
 # Expose the port the application runs on
 EXPOSE 8080
