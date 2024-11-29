@@ -1,8 +1,13 @@
+// Add CORS services
 using System.Text.Json;
 using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Retrieve the production domain from environment variables
+var productionDomain = builder.Configuration["PRODUCTION_DOMAIN"];
+Console.WriteLine($"Current production domain is {productionDomain}");
 
 // Add CORS services
 builder.Services.AddCors(options =>
@@ -13,10 +18,11 @@ builder.Services.AddCors(options =>
             policy.SetIsOriginAllowed(origin =>
             {
                 var uri = new Uri(origin);
-                return uri.Host == "localhost" || uri.Host == builder.Configuration["PRODUCTION_DOMAIN"];
+                Console.WriteLine($"Origin: {origin}, Host: {uri.Host}");
+                return uri.Host == "localhost" || uri.Host == new Uri(productionDomain).Host;
             })
             .AllowAnyHeader()
-            .WithMethods("GET");
+            .AllowAnyMethod();
         });
 });
 
@@ -42,6 +48,8 @@ app.UseHttpsRedirection();
 app.UseCors("AllowedOrigins");
 
 app.UseIpRateLimiting();
+
+// route maps ...
 
 app.MapGet("/games", async ([FromQuery] string? queryParams) =>
     {
