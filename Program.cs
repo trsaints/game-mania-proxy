@@ -307,6 +307,8 @@ app.MapGet("/tags/{id:int}", async (int id) =>
     .WithName("GetTagById")
     .WithOpenApi();
 
+Console.WriteLine($"Current production domain is {builder.Configuration["PRODUCTION_DOMAIN"]}");
+
 app.Run();
 
 internal static class ApiUtils
