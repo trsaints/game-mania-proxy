@@ -1,4 +1,5 @@
 // Add CORS services
+
 using System.Text.Json;
 using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Mvc;
@@ -16,13 +17,13 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy.SetIsOriginAllowed(origin =>
-            {
-                var uri = new Uri(origin);
-                Console.WriteLine($"Origin: {origin}, Host: {uri.Host}");
-                return uri.Host == "localhost" || uri.Host == new Uri(productionDomain).Host;
-            })
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+                {
+                    var uri = new Uri(origin);
+                    Console.WriteLine($"Origin: {origin}, Host: {uri.Host}");
+                    return uri.Host == "localhost" || uri.Host == new Uri(productionDomain).Host;
+                })
+                .AllowAnyHeader()
+                .AllowAnyMethod();
         });
 });
 
@@ -51,15 +52,18 @@ app.UseIpRateLimiting();
 
 // route maps ...
 
-app.MapGet("/games", async ([FromQuery] string? queryParams) =>
+app.MapGet("/games", async (HttpRequest request) =>
     {
         using HttpClient client = new();
 
         try
         {
+            var queryParams = request.QueryString.Value?.Replace('?', '&');
             var routeUrl = ApiUtils.GetApiUrl(builder.Configuration, "games", queryParams);
             var response = await client.GetAsync(routeUrl);
+            
             response.EnsureSuccessStatusCode();
+            
             var content = await response.Content.ReadAsStringAsync();
             var result = JsonSerializer.Deserialize<object>(content);
 
